@@ -10,6 +10,8 @@ import Katakana from './syllabary/Katakana.js'
 import Character from './components/Character.js'
 import StartButton from './components/StartButton.js'
 
+const DEFAULT_LIFE = 3
+
 const App = props => {
   const [alertText, setAlertText] = useState('')
   const [alertTitle, setAlertTitle] = useState('')
@@ -18,6 +20,7 @@ const App = props => {
   const [gameStart, setGameStart] = useState(false)
   const [characters, setCharacters] = useState(Object.assign(Hiragana, Katakana))
   const [currentCharacter, setCurrentCharacter] = useState('')
+  const [life, setLife] = useState(DEFAULT_LIFE)
 
   const randomCharacter = characters => {
     let result
@@ -36,7 +39,6 @@ const App = props => {
       setAlertTitle('Woops')
       setAlertText(`${currentCharacter} is "${characters[currentCharacter]}"`)
       setAlertActive(true)
-      setCurrentCharacter(randomCharacter(characters))
     }
   }
 
@@ -46,7 +48,27 @@ const App = props => {
   }
 
   const end = () => {
-    setGameStart(false)
+    setLife(life => {
+      if (life > 1) {
+        setCurrentCharacter(randomCharacter(characters))
+        return life - 1
+      } else {
+        setGameStart(false)
+        return DEFAULT_LIFE
+      }
+    })
+  }
+
+  const onConfirmAlert = () => {
+    if (life > 1) {
+      setLife(life - 1)
+      setCurrentCharacter(randomCharacter(characters))
+      setAlertActive(false)
+    } else {
+      setAlertActive(false)
+      setGameStart(false)
+      setLife(DEFAULT_LIFE)
+    }
   }
 
   return (
@@ -63,12 +85,13 @@ const App = props => {
             text={alertText}
             title={alertTitle}
             show={alertActive}
-            onConfirm={() => setAlertActive(false)}
+            onConfirm={onConfirmAlert}
           />
-          <Timer handler={end}/>
+          <Timer handler={end} currentCharacter={currentCharacter} />
           <Title>Guess The Character</Title>
           <Character>{currentCharacter}</Character>
           <Answer handler={checkAnswer} />
+          <Title>{`Chance: ${life}`}</Title>
         </Fragment>
       )}
     </div>
