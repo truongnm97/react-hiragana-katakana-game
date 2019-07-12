@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react'
+import React, { Fragment, Component, useState } from 'react'
 import Title from './components/Title.js'
 import Timer from './components/Timer.js'
 import Alert from './components/Alert.js'
@@ -10,18 +10,16 @@ import Katakana from './syllabary/Katakana.js'
 import Character from './components/Character.js'
 import StartButton from './components/StartButton.js'
 
-export default class App extends Component {
-  state = {
-    alertText: '',
-    alertTitle: '',
-    alertActive: false,
-    alertType: 'success',
-    gameStart: false,
-    characters: Object.assign(Hiragana, Katakana),
-    currentCharacter: ''
-  }
+const App = props => {
+  const [alertText, setAlertText] = useState('')
+  const [alertTitle, setAlertTitle] = useState('')
+  const [alertActive, setAlertActive] = useState(false)
+  const [alertType, setAlertType] = useState('success')
+  const [gameStart, setGameStart] = useState(false)
+  const [characters, setCharacters] = useState(Object.assign(Hiragana, Katakana))
+  const [currentCharacter, setCurrentCharacter] = useState('')
 
-  randomCharacter(characters) {
+  const randomCharacter = characters => {
     let result
     let count = 0
     Object.keys(characters).map(character => {
@@ -30,61 +28,51 @@ export default class App extends Component {
     return result
   }
 
-  checkAnswer = answer => {
-    if (answer == this.state.characters[this.state.currentCharacter]) {
-      this.setState({
-        currentCharacter: this.randomCharacter(this.state.characters)
-      })
+  const checkAnswer = answer => {
+    if (answer === characters[currentCharacter]) {
+      setCurrentCharacter(randomCharacter(characters))
     } else {
-      this.setState({
-        alertType: 'error',
-        alertTitle: 'Woops',
-        alertText: `${this.state.currentCharacter} is "${
-          this.state.characters[this.state.currentCharacter]
-        }"`,
-        alertActive: true,
-        currentCharacter: this.randomCharacter(this.state.characters)
-      })
+      setAlertType('error')
+      setAlertTitle('Woops')
+      setAlertText(`${currentCharacter} is "${characters[currentCharacter]}"`)
+      setAlertActive(true)
+      setCurrentCharacter(randomCharacter(characters))
     }
   }
 
-  start = () => {
-    this.setState({
-      gameStart: true,
-      currentCharacter: this.randomCharacter(this.state.characters)
-    })
+  const start = () => {
+    setGameStart(true)
+    setCurrentCharacter(randomCharacter(characters))
   }
 
-  end = () => {
-    this.setState({
-      gameStart: false
-    })
+  const end = () => {
+    setGameStart(false)
   }
 
-  render() {
-    return (
-      <div>
-        {!this.state.gameStart ? (
-          <Fragment>
-            <Title>Learn Hiragana/Katakana</Title>
-            <StartButton handler={this.start} />
-          </Fragment>
-        ) : (
-          <Fragment>
-            <SweetAlert
-              type={this.state.alertType}
-              text={this.state.alertText}
-              title={this.state.alertTitle}
-              show={this.state.alertActive}
-              onConfirm={() => this.setState({ alertActive: false })}
-            />
-            {/*<Timer handler={this.end}/> */}
-            <Title>Guess The Character</Title>
-            <Character>{this.state.currentCharacter}</Character>
-            <Answer handler={this.checkAnswer} />
-          </Fragment>
-        )}
-      </div>
-    )
-  }
+  return (
+    <div>
+      {!gameStart ? (
+        <Fragment>
+          <Title>Learn Hiragana/Katakana</Title>
+          <StartButton handler={start} />
+        </Fragment>
+      ) : (
+        <Fragment>
+          <SweetAlert
+            type={alertType}
+            text={alertText}
+            title={alertTitle}
+            show={alertActive}
+            onConfirm={() => setAlertActive(false)}
+          />
+          <Timer handler={end}/>
+          <Title>Guess The Character</Title>
+          <Character>{currentCharacter}</Character>
+          <Answer handler={checkAnswer} />
+        </Fragment>
+      )}
+    </div>
+  )
 }
+
+export default App

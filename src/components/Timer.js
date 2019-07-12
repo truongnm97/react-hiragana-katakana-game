@@ -1,32 +1,35 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
+import useInterval from '../hooks/useInterval'
 
-export default class TimerContainer extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      time: 60
+const TimerContainer = props => {
+  const [time, setTime] = useState(10)
+  const [timerId, setTimerId] = useState(null)
+
+  // Effect
+  useEffect(() => {
+    const tick = () => {
+      if (time > 0) {
+        setTime(time - 1)
+      } else {
+        props.handler()
+      }
     }
-  }
 
-  componentDidMount() {
-    this.timerID = setInterval(() => this.tick(), 1000)
-  }
+    let id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
 
-  componentWillUnmount() {
-    clearInterval(this.timeID)
-  }
+  console.log('time...', time)
 
-  tick() {
-    if (this.state.time > 0) {
-      this.setState({
-        time: this.state.time - 1
-      })
-    } else {
-      this.props.handler()
-    }
-  }
+  // useInterval(() => {
+  //   if (time > 0) {
+  //     setTime(time - 1)
+  //   } else {
+  //     props.handler()
+  //   }
+  // }, 1000)
 
-  render() {
-    return <time>{this.state.time}</time>
-  }
+  return <time>{time}</time>
 }
+
+export default TimerContainer
