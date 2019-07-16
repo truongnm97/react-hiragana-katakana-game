@@ -7,7 +7,14 @@ export default class Answer extends Component {
     this.state = {
       answer: ''
     }
-    this.checkAnswer = this.checkAnswer.bind(this)
+  }
+
+  componentDidMount() {
+    this.nameInput.focus()
+  }
+
+  componentDidUpdate() {
+    this.nameInput.focus()
   }
 
   handleChange(e) {
@@ -16,7 +23,7 @@ export default class Answer extends Component {
     })
   }
 
-  checkAnswer(e) {
+  checkAnswer = (e) => {
     e.preventDefault()
     this.props.handler(this.state.answer)
     this.setState({
@@ -31,6 +38,7 @@ export default class Answer extends Component {
           value={this.state.answer}
           placeholder="Type the answer here"
           onChange={this.handleChange.bind(this)}
+          ref={(input) => { this.nameInput = input; }}
           style={{
             flexGrow: '1',
             fontSize: '.7em',
@@ -44,6 +52,7 @@ export default class Answer extends Component {
           }}
         />
         <Button type="submit">Submit</Button>
+        <Button type="button" onClick={this.props.onReset}>Reset</Button>
       </form>
     )
   }

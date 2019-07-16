@@ -1,4 +1,8 @@
 import React, { Fragment, Component, useState } from 'react'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/es/integration/react'
+
+import configStore from './redux/configStore'
 import Title from './components/Title.js'
 import Timer from './components/Timer.js'
 import Alert from './components/Alert.js'
@@ -10,7 +14,9 @@ import Katakana from './syllabary/Katakana.js'
 import Character from './components/Character.js'
 import StartButton from './components/StartButton.js'
 
-const DEFAULT_LIFE = 3
+const DEFAULT_LIFE = 1000
+const DEFAULT_DATA = Object.assign(Hiragana)
+const DATA_LENGTH = Object.keys(DEFAULT_DATA).length
 
 const App = props => {
   const [alertText, setAlertText] = useState('')
@@ -18,28 +24,46 @@ const App = props => {
   const [alertActive, setAlertActive] = useState(false)
   const [alertType, setAlertType] = useState('success')
   const [gameStart, setGameStart] = useState(false)
-  const [characters, setCharacters] = useState(Object.assign(Hiragana, Katakana))
+  const [characters, setCharacters] = useState(DEFAULT_DATA)
   const [currentCharacter, setCurrentCharacter] = useState('')
+  const [currentCharacterValue, setCurrentCharacterValue] = useState('')
   const [life, setLife] = useState(DEFAULT_LIFE)
+  const [correctAnswer, setCorrectAnswer] = useState(0)
 
   const randomCharacter = characters => {
-    let result
-    let count = 0
-    Object.keys(characters).map(character => {
-      if (Math.random() < 1 / ++count) result = character
-    })
+    const keys = Object.keys(characters)
+    const chars = characters
+    const result = keys[Math.round(Math.random() * (keys.length - 1))]
+    setCurrentCharacterValue(characters[result])
+    delete chars[result]
+    setCharacters(chars)
     return result
   }
 
   const checkAnswer = answer => {
-    if (answer === characters[currentCharacter]) {
+    if (answer === currentCharacterValue) {
+      setCorrectAnswer(correctAnswer + 1)
       setCurrentCharacter(randomCharacter(characters))
     } else {
       setAlertType('error')
       setAlertTitle('Woops')
-      setAlertText(`${currentCharacter} is "${characters[currentCharacter]}"`)
+      setAlertText(`${currentCharacter} is "${currentCharacterValue}"`)
+      setCurrentCharacter(randomCharacter(characters))
+      // if (life > 1) {
+      //   setLife(life - 1)
+      //   setCurrentCharacter(randomCharacter(characters))
+      // } else {
+      //   setGameStart(false)
+      //   setLife(DEFAULT_LIFE)
+      //   setCharacters(DEFAULT_DATA)
+      // }
       setAlertActive(true)
     }
+    // if (Object.keys(characters).length === 0) {
+    //   setLife(DEFAULT_LIFE)
+    //   setCharacters(DEFAULT_DATA)
+    //   setGameStart(false)
+    // }
   }
 
   const start = () => {
@@ -48,53 +72,57 @@ const App = props => {
   }
 
   const end = () => {
-    setLife(life => {
-      if (life > 1) {
-        setCurrentCharacter(randomCharacter(characters))
-        return life - 1
-      } else {
-        setGameStart(false)
-        return DEFAULT_LIFE
-      }
-    })
-  }
-
-  const onConfirmAlert = () => {
     if (life > 1) {
-      setLife(life - 1)
       setCurrentCharacter(randomCharacter(characters))
-      setAlertActive(false)
+      setLife(life - 1)
     } else {
-      setAlertActive(false)
       setGameStart(false)
       setLife(DEFAULT_LIFE)
+      setCharacters(DEFAULT_DATA)
     }
   }
 
+  const onConfirmAlert = () => {
+    setAlertActive(false)
+  }
+
+  const onReset = () => {
+    setLife(DEFAULT_LIFE)
+    setCorrectAnswer(0)
+    setCharacters(DEFAULT_DATA)
+    setCurrentCharacter(randomCharacter(characters))
+    console.log('data...', DEFAULT_DATA)
+  }
+
   return (
-    <div>
-      {!gameStart ? (
-        <Fragment>
-          <Title>Learn Hiragana/Katakana</Title>
-          <StartButton handler={start} />
-        </Fragment>
-      ) : (
-        <Fragment>
-          <SweetAlert
-            type={alertType}
-            text={alertText}
-            title={alertTitle}
-            show={alertActive}
-            onConfirm={onConfirmAlert}
-          />
-          <Timer handler={end} currentCharacter={currentCharacter} />
-          <Title>Guess The Character</Title>
-          <Character>{currentCharacter}</Character>
-          <Answer handler={checkAnswer} />
-          <Title>{`Chance: ${life}`}</Title>
-        </Fragment>
-      )}
-    </div>
+    <Provider store={configStore.store}>
+      <PersistGate persistor={configStore.persistor}>
+        {!gameStart ? (
+          <Fragment>
+            <Title>Learn Hiragana/Katakana</Title>
+            {/* <Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title> */}
+            <StartButton handler={start} />
+          </Fragment>
+        ) : (
+          <Fragment>
+            <SweetAlert
+              type={alertType}
+              text={alertText}
+              title={alertTitle}
+              show={alertActive}
+              onConfirm={onConfirmAlert}
+            />
+            {/* <Timer handler={end} currentCharacter={currentCharacter} /> */}
+            <Title>Guess The Character</Title>
+            <Character>{currentCharacter}</Character>
+            <Answer handler={checkAnswer} onReset={onReset}/>
+            {/* <Title>{`Chance: ${life}`}</Title> */}
+            <Title>{`Characters: ${Object.keys(characters).length + 1}`}</Title>
+            <Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title>
+          </Fragment>
+        )}
+      </PersistGate>
+    </Provider>
   )
 }
 
