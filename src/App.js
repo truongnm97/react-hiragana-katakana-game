@@ -16,7 +16,7 @@ import StartButton from './components/StartButton.js'
 
 const DEFAULT_LIFE = 1000
 const DEFAULT_DATA = Object.assign(Hiragana)
-const DATA_LENGTH = Object.keys(DEFAULT_DATA).length
+const DATA_LENGTH = Object.keys({...DEFAULT_DATA}).length
 
 const App = props => {
   const [alertText, setAlertText] = useState('')
@@ -24,19 +24,26 @@ const App = props => {
   const [alertActive, setAlertActive] = useState(false)
   const [alertType, setAlertType] = useState('success')
   const [gameStart, setGameStart] = useState(false)
-  const [characters, setCharacters] = useState(DEFAULT_DATA)
+  const [characters, setCharacters] = useState({...DEFAULT_DATA})
   const [currentCharacter, setCurrentCharacter] = useState('')
   const [currentCharacterValue, setCurrentCharacterValue] = useState('')
   const [life, setLife] = useState(DEFAULT_LIFE)
   const [correctAnswer, setCorrectAnswer] = useState(0)
 
-  const randomCharacter = characters => {
+  const randomCharacter = (characters,reset=0) => {
     const keys = Object.keys(characters)
     const chars = characters
     const result = keys[Math.round(Math.random() * (keys.length - 1))]
     setCurrentCharacterValue(characters[result])
-    delete chars[result]
-    setCharacters(chars)
+    
+    if(reset) {
+      setCharacters({...DEFAULT_DATA})
+      
+    }
+    else{      
+      delete chars[result]
+      setCharacters(chars)
+    }
     return result
   }
 
@@ -78,7 +85,7 @@ const App = props => {
     } else {
       setGameStart(false)
       setLife(DEFAULT_LIFE)
-      setCharacters(DEFAULT_DATA)
+      setCharacters({...DEFAULT_DATA})
     }
   }
 
@@ -86,14 +93,14 @@ const App = props => {
     setAlertActive(false)
   }
 
-  const onReset = () => {
+  const onReset = (reset) => {
     setLife(DEFAULT_LIFE)
     setCorrectAnswer(0)
-    setCharacters(DEFAULT_DATA)
-    setCurrentCharacter(randomCharacter(characters))
+    setCharacters({...DEFAULT_DATA})
+    setCurrentCharacter(randomCharacter(characters,reset))
     console.log('data...', DEFAULT_DATA)
   }
-
+ 
   return (
     <Provider store={configStore.store}>
       <PersistGate persistor={configStore.persistor}>
@@ -115,7 +122,7 @@ const App = props => {
             {/* <Timer handler={end} currentCharacter={currentCharacter} /> */}
             <Title>Guess The Character</Title>
             <Character>{currentCharacter}</Character>
-            <Answer handler={checkAnswer} onReset={onReset}/>
+            <Answer handler={checkAnswer} onReset={()=>onReset(1)}/>
             {/* <Title>{`Chance: ${life}`}</Title> */}
             <Title>{`Characters: ${Object.keys(characters).length + 1}`}</Title>
             <Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title>
