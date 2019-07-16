@@ -32,15 +32,17 @@ const App = props => {
 
   const randomCharacter = (characters,reset=0) => {
     const keys = Object.keys(characters)
-    const chars = characters
+    let chars = {...DEFAULT_DATA}
     const result = keys[Math.round(Math.random() * (keys.length - 1))]
     setCurrentCharacterValue(characters[result])
     
     if(reset) {
       setCharacters({...DEFAULT_DATA})
-      
+      delete chars[result]
+      setCharacters(chars)
     }
-    else{      
+    else{   
+      chars = characters
       delete chars[result]
       setCharacters(chars)
     }
@@ -98,7 +100,6 @@ const App = props => {
     setCorrectAnswer(0)
     setCharacters({...DEFAULT_DATA})
     setCurrentCharacter(randomCharacter(characters,reset))
-    console.log('data...', DEFAULT_DATA)
   }
  
   return (
