@@ -51,7 +51,7 @@ export default class Answer extends Component {
             border: '3px solid #fff'
           }}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" style={{ marginRight: '1em' }}>Submit</Button>
         <Button type="button" onClick={this.props.onReset}>Reset</Button>
       </form>
     )
