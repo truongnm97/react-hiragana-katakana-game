@@ -3,10 +3,10 @@ import { Route, Switch } from 'react-router'
 
 import Home from './Home'
 
-const AppNavigation = props => (
-  <Switch>
-    <Route path={'/'} name={'Home'} component={Home}/>
-  </Switch>
+const AppNavigation = () => (
+	<Switch>
+		<Route path={'/'} name={'Home'} component={Home}/>
+	</Switch>
 )
 
 export default AppNavigation
