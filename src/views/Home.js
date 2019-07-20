@@ -88,7 +88,7 @@ const Home = () => {
 	}
 
 	return (
-		<Fragment>
+		<div className="container">
 			{!gameStart ? (
 				<Fragment>
 					<Title>Learn Hiragana/Katakana</Title>
@@ -113,7 +113,7 @@ const Home = () => {
 					<Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title>
 				</Fragment>
 			)}
-		</Fragment>
+		</div>
 	)
 }
 
