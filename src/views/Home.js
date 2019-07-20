@@ -88,7 +88,7 @@ const Home = () => {
 	}
 
 	return (
-		<div className="container">
+		<div className='container'>
 			{!gameStart ? (
 				<Fragment>
 					<Title>Learn Hiragana/Katakana</Title>

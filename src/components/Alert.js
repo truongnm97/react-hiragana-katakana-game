@@ -11,7 +11,7 @@ const Background = styled.div`
 	position: fixed;
 	align-items: center;
 	justify-content: center;
-	background: rgba(0,0,0,0.5);
+	background: rgba(0, 0, 0, 0.5);
 `
 
 const AlertContainer = styled.div`
@@ -20,7 +20,7 @@ const AlertContainer = styled.div`
 	background: #fff;
 	text-align: center;
 	border-radius: 3px;
-	box-shadow: 0 1px 5px 0 rgba(0,0,0,0.3);
+	box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.3);
 `
 
 const Alert = props => (
@@ -36,10 +36,9 @@ const Alert = props => (
 	</div>
 )
 
-
 Alert.propTypes = {
 	active: PropTypes.bool,
-	children: PropTypes.any
+	children: PropTypes.any,
 }
 
 export default Alert
