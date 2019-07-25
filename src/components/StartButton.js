@@ -10,17 +10,21 @@ const StartButton = props => {
 	const { add } = mapDispatch(dispatch)
 
 	return (
-		<Button
-			onClick={() => {
-				props.handler()
-				add(123)
-			}}
-			style={{
-				display: 'block',
-				margin: 'auto',
-			}}>
-			Start Game
-		</Button>
+		<div className='container'>
+			<div className='row'>
+				<Button
+					onClick={() => {
+						props.handler()
+						add(123)
+					}}
+					style={{
+						display: 'block',
+						margin: 'auto',
+					}}>
+					Start Game
+				</Button>
+			</div>
+		</div>
 	)
 }
 

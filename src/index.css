@@ -12,7 +12,7 @@ body {
 
 body {
   background: linear-gradient(135deg, #3023ae 0%, #c86dd7 100%);
-  color: #fff;
+  color: #fff!important;
   font-size: 18px;
   display: flex;
   justify-content: center;

@@ -89,30 +89,32 @@ const Home = () => {
 
 	return (
 		<div className='container'>
-			{!gameStart ? (
-				<Fragment>
-					<Title>Learn Hiragana/Katakana</Title>
-					{/* <Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title> */}
-					<StartButton handler={start} />
-				</Fragment>
-			) : (
-				<Fragment>
-					<SweetAlert
-						type={alertType}
-						text={alertText}
-						title={alertTitle}
-						show={alertActive}
-						onConfirm={onConfirmAlert}
-					/>
-					{/* <Timer handler={end} currentCharacter={currentCharacter} /> */}
-					<Title>Guess The Character</Title>
-					<Character>{currentCharacter}</Character>
-					<Answer handler={checkAnswer} onReset={() => onReset(1)} />
-					{/* <Title>{`Chance: ${life}`}</Title> */}
-					<Title>{`Characters: ${Object.keys(characters).length + 1}`}</Title>
-					<Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title>
-				</Fragment>
-			)}
+			<div className='row'>
+				{!gameStart ? (
+					<Fragment>
+						<Title>Learn Hiragana/Katakana</Title>
+						{/* <Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title> */}
+						<StartButton handler={start} />
+					</Fragment>
+				) : (
+					<Fragment>
+						<SweetAlert
+							type={alertType}
+							text={alertText}
+							title={alertTitle}
+							show={alertActive}
+							onConfirm={onConfirmAlert}
+						/>
+						{/* <Timer handler={end} currentCharacter={currentCharacter} /> */}
+						<Title>Guess The Character</Title>
+						<Character>{currentCharacter}</Character>
+						<Answer handler={checkAnswer} onReset={() => onReset(1)} />
+						{/* <Title>{`Chance: ${life}`}</Title> */}
+						<Title>{`Characters: ${Object.keys(characters).length + 1}`}</Title>
+						<Title>{`Corrected: ${correctAnswer}/${DATA_LENGTH}`}</Title>
+					</Fragment>
+				)}
+			</div>
 		</div>
 	)
 }
